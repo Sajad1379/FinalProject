@@ -89,3 +89,4 @@ for i in range(0,rows):
 
 data.to_excel(r'C:\Users\sajad\Desktop\FinalProject\assessments.xlsx', index=False)
 /////////////////////////////////////////// read data , k-means , write data , save data //////////////////////////////////////////
+my change sajad rahmani
