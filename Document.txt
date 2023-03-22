@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
 import numpy as np
-
+#paniz taheri
 # create an example dataset
 X = np.array([
     [1, 2],
