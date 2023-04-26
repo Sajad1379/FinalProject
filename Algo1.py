@@ -13,11 +13,12 @@ print(f"Number of columns: {cols}")
 print('================================')
 weight = []
 for i in range(0,rows):
-    weight.append([data.iloc[i,5],data.iloc[i,7],data.iloc[i,10],data.iloc[i,15]])
+    for j in range(1,20):
+        weight.append([data.iloc[i,j]])
     
 X=np.array(weight)
-
-kmeans = KMeans(n_clusters=4, n_init=206)
+print(X)
+kmeans = KMeans(n_clusters=5, n_init=206)
 
 kmeans.fit(X)
 
