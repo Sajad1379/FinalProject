@@ -53,31 +53,43 @@ for i in range(0,rows_studentVle):
 
 X_studentVle = sorted(weight_studentVle, key=lambda x: x[0])
 
+count = 0
+for i in range(0, 663):
+    if(X_studentVle[i][0] == 6516):
+        count = count + 1 
 
+print(count)
 #============================================================
 
 
 start = time.time()
 
-for i in range(0 , rows_student):
-    dataMain.at[i , 'id_student'] = X_student[i][0]
-    for j in range(0,len(activity_type)):
-        sum = 0
-        flag = False
-        for k in range(0,len(X_studentVle)):
-            if(X_student[i][0]==X_studentVle[k][0] and activity_type[j]==X_studentVle[k][2]):
-                sum = sum + int(X_studentVle[k][1])
-                X_studentVle = np.delete(X_studentVle , k)
-                flag = True
-            if(X_student[i][0] != X_studentVle[k][0] and flag == True):
-                break
-            
-        dataMain.at[i , activity_type[j]] = sum
-    
-    if i==1000 :
-        len(X_studentVle)
-    dataMain.at[i , 'final_result'] = X_student[i][1]
-end = time.time()
 
-print(end-start)
-dataMain.to_excel(r'C:\Users\hp\Desktop\FinalProject\DataMain.xlsx', index=False)
+
+
+# for i in range(0 , 1):
+#     dataMain.at[i , 'id_student'] = X_student[i][0]
+#     for j in range(0,len(activity_type)):
+#         sum = 0
+#         count = 0
+#         for k in range(0,len(X_studentVle)):
+#             print ((X_student[i][0]) , (X_studentVle[k][0]))
+#             if(6516 == int(X_studentVle[k][0]) and str(activity_type[j])==str(X_studentVle[k][2])):
+#                 count = count + 1
+#                 sum = sum + int(X_studentVle[k][1])
+#                 del X_studentVle[k]
+#                 print("okkkkkkkkkkkkkkkkkkkkk" , sum)
+                
+
+#             if(6516 < X_studentVle[k][0]):
+#                 break
+#         print(count)   
+#         dataMain.at[i , activity_type[j]] = sum
+    
+#     if i==1000 :
+#         len(X_studentVle)
+#     dataMain.at[i , 'final_result'] = X_student[i][1]
+# end = time.time()
+
+# print(end-start)
+# dataMain.to_excel(r'C:\Users\hp\Desktop\FinalProject\DataMain.xlsx', index=False)
