@@ -1,0 +1,92 @@
+from sklearn.cluster import KMeans
+import numpy as np
+#paniz taheri
+# create an example dataset
+X = np.array([
+    [1, 2],
+    [1, 4],
+    [1, 0],
+    [10, 2],
+    [10, 4],
+    [10, 0]
+])
+
+# create a k-means object with 2 clusters
+kmeans = KMeans(n_clusters=2, n_init=5)
+
+# fit the k-means object to the data
+kmeans.fit(X)
+
+# print the centers of the clusters learned
+print(kmeans.labels_)
+
+/////////////////////////////////////////////////////////////// test K-means /////////////////////////////////////
+import pandas as pd
+
+#show all data in the excel/kole excelo neshon mide
+data=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\assessments.xlsx',engine='openpyxl')
+print(data)
+
+print('================================')
+#show columns data/ mohtavaye soton haee k dakhel [] esmesho neveshtim namayesh mide
+code_m=pd.DataFrame(data,columns=['code_module'])
+print(code_m)
+
+print('================================')
+#show excel data row by row / yek list az satr haro neshon mide
+print(data.values)
+
+print('================================')
+#avali neshon dahande satre dovomi soton 
+# masalan in code sotone panjome(shomare soton 4 e vali panjomin sotone chon az 0 shomaregozari shode) satre avalo dovomo(satre shomare 0 , 1) neshon mide
+print(data.iloc[0:2,4])
+
+print('================================')
+#masalan in yeki sotone shomare 2 , 3e(sevomi o charomi)satr haye shomare 1 ta 3(dovomi ta charomi)
+print(data.iloc[1:4 , 2:4])
+
+print('================================')
+rows, cols = data.shape
+print(f"Number of rows: {rows}")
+print(f"Number of columns: {cols}")
+
+print('================================')
+for i in range(1,rows):
+    for j in range(1,cols):        
+        print(data.iloc[i,j])
+    
+//////////////////////////////////////////////////////// read data Excel in python ////////////////////////////////////
+
+import pandas as pd
+from sklearn.cluster import KMeans
+import numpy as np
+import openpyxl
+import os
+
+data=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\assessments.xlsx',engine='openpyxl')
+
+rows, cols = data.shape
+print(f"Number of rows: {rows}")
+print(f"Number of columns: {cols}")
+
+print('================================')
+weight = []
+for i in range(0,rows):
+    weight.append([data.iloc[i,5]])
+    
+X=np.array(weight)
+
+kmeans = KMeans(n_clusters=4, n_init=206)
+
+kmeans.fit(X)
+
+data_c=kmeans.labels_
+
+for i in range(0,rows):
+    data.at[i , "k-means"]=data_c[i]
+
+
+
+data.to_excel(r'C:\Users\sajad\Desktop\FinalProject\assessments.xlsx', index=False)
+/////////////////////////////////////////// read data , k-means , write data , save data //////////////////////////////////////////
+my change sajad rahmani
