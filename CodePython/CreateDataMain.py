@@ -19,11 +19,11 @@ activity_type = [
     'subpage' , 'url'    
  ]
 
-studentVle=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\studentVleTest.xlsx',engine='openpyxl')
+studentVle=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\studentVleTest.xlsx',engine='openpyxl')
 
-student=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\test.xlsx',engine='openpyxl')
+student=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\studentInfo.xlsx',engine='openpyxl')
 
-dataMain = pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\DataMain.xlsx',engine='openpyxl')
+dataMain = pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\DataMain.xlsx',engine='openpyxl')
 
 rows_studentVle, cols_studentVle = studentVle.shape
 print(f"Number of rows: {rows_studentVle}")
@@ -66,7 +66,7 @@ start = time.time()
 
 
 
-for i in range(0 , 1):
+for i in range(0 , rows_student):
     dataMain.at[i , 'id_student'] = X_student[i][0]
     for j in range(0,len(activity_type)):
         sum = 0
@@ -84,4 +84,4 @@ for i in range(0 , 1):
 end = time.time()
 
 print(end-start)
-dataMain.to_excel(r'C:\Users\sajad\Desktop\FinalProject\DataMain.xlsx', index=False)
+dataMain.to_excel(r'C:\Users\hp\Desktop\FinalProject\DataMain.xlsx', index=False)
