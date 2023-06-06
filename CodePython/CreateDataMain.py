@@ -14,6 +14,7 @@ activity_type = [
     'dataplus','dualpane','externalquiz',
     'folder' , 'forumng' , 'glossary',
     'homepage' , 'htmlactivity' , 'oucollaborate',
+    'oucontent',
     'ouwiki' , 'page' , 'questionnaire' , 'quiz'
     'repeatactivity' , 'resource' , 'sharedsubpage',
     'subpage' , 'url'    
@@ -66,7 +67,7 @@ start = time.time()
 
 
 
-for i in range(0 , 1):
+for i in range(0 , rows_student):
     dataMain.at[i , 'id_student'] = X_student[i][0]
     for j in range(0,len(activity_type)):
         sum = 0
