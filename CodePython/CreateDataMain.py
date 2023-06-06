@@ -14,6 +14,7 @@ activity_type = [
     'dataplus','dualpane','externalquiz',
     'folder' , 'forumng' , 'glossary',
     'homepage' , 'htmlactivity' , 'oucollaborate',
+    'oucontent',
     'ouwiki' , 'page' , 'questionnaire' , 'quiz'
     'repeatactivity' , 'resource' , 'sharedsubpage',
     'subpage' , 'url'    
