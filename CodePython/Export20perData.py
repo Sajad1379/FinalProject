@@ -37,7 +37,7 @@ for i in range(0,rows_student):
 X_student= sorted(weight_student, key=lambda x: x[0])
 
 
-
+print(X_student[0])
 #============================================================
 
 
@@ -47,23 +47,23 @@ for i in range(0,rows_data):
     weight_data.append([data.iloc[i,0]])
 
 
-X_data = np.array(weight_data)
+X_data= sorted(weight_data, key=lambda x: x[0])
 
-X_student= sorted(weight_data, key=lambda x: x[0])
 
 #============================================================
 count =0
-for i in range(0,len(X_student)):
-    for j in range(0,rows_data):
-        if(i >= len(X_student)):
-            break
-        if((X_data[j][0]) == (X_student[i][0])):
-            del X_student[i]
-            break
+for i in range(0,rows_student):
+    for j in range(0 ,rows_data):
+        flag = True
+        try:
+            if((X_data[j][0]) == (X_student[i][0])):
+                flag = False
+                testData.at[count , 'student_id'] = X_student[i][0]
+                testData.at[count , 'final_result'] = X_student[i][1]
+        except:
+            print(len(X_student))
+            print(j)
+            exit(0)
     
-print(len(X_student))
-for i in range(0 , len(X_student)):
-    testData.at[count , 'student_id'] = X_student[i][0]
-    testData.at[count , 'final_result'] = X_student[i][1]
 
 testData.to_excel(r'C:\Users\sajad\Desktop\FinalProject\testData.xlsx', index=False)

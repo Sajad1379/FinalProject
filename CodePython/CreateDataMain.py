@@ -22,7 +22,7 @@ activity_type = [
 
 studentVle=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\studentVleTest.xlsx',engine='openpyxl')
 
-student=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\studentInfo.xlsx',engine='openpyxl')
+student=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\testData.xlsx',engine='openpyxl')
 
 dataMain = pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\DataMain.xlsx',engine='openpyxl')
 

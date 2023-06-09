@@ -145,7 +145,6 @@ print("#model training")
 # train a Gaussian Naive Bayes classifier on the training set
 from sklearn.naive_bayes import GaussianNB
 
-
 # instantiate the model
 gnb = GaussianNB()
 
@@ -200,6 +199,10 @@ print("# Print the Confusion Matrix and slice it into four pieces")
 
 from sklearn.metrics import confusion_matrix
 
+
+labels = ['Withdrawn' , 'Fail' , 'Pass' , 'Distinction']
+
+# print(gnb.classes_)
 cm = confusion_matrix(y_test, y_pred, labels=gnb.classes_)
 
 print('Confusion matrix\n\n', cm)
@@ -222,7 +225,19 @@ plt.ylabel('prediction', fontsize=13)
 plt.xlabel('actual', fontsize=13)
 plt.title('confusion matrix', fontsize=17)
 plt.show()
+# رسم نمودار ماتریس اغتشاش
+# fig, ax = plt.subplots()
+# im = ax.matshow(cm)
 
+# # تنظیمات نمودار
+# ax.set_xticklabels([''] + labels)
+# ax.set_yticklabels([''] + labels)
+# plt.xlabel('Predicted Label')
+# plt.ylabel('True Label')
+# plt.title('Confusion Matrix')
+
+# # نمایش نمودار
+# plt.show()
 
 print("================= Classification metrices ===============")
 
@@ -535,47 +550,47 @@ plt.xlabel('Predicted probabilities of Withdrawn ')
 plt.ylabel('Frequency')
 plt.show()
 
-# print("==================== ROC - AUC ========================")
+print("==================== ROC - AUC ========================")
 
-# print("# plot ROC Curve")
+print("# plot ROC Curve")
 
-# from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_curve
 
-# fpr, tpr, thresholds = matrics.roc_curve(y_test, y_pred1, pos_label = 'Fail')
+fpr, tpr, thresholds = matrics.roc_curve(y_test, y_pred1, pos_label = 'Fail')
 
-# plt.figure(figsize=(6,4))
+plt.figure(figsize=(6,4))
 
-# plt.plot(fpr, tpr, linewidth=2)
+plt.plot(fpr, tpr, linewidth=2)
 
-# plt.plot([0,1], [0,1], 'k--' )
+plt.plot([0,1], [0,1], 'k--' )
 
-# plt.rcParams['font.size'] = 12
+plt.rcParams['font.size'] = 12
 
-# plt.title('ROC curve for Gaussian Naive Bayes Classifier for Predicting finalresult')
+plt.title('ROC curve for Gaussian Naive Bayes Classifier for Predicting finalresult')
 
-# #=========== ? ==============
+#=========== ? ==============
 
-# plt.xlabel('False Positive Rate (1 - Specificity)')
+plt.xlabel('False Positive Rate (1 - Specificity)')
 
-# plt.ylabel('True Positive Rate (Sensitivity)')
+plt.ylabel('True Positive Rate (Sensitivity)')
 
-# plt.show()
+plt.show()
 
-# print("# compute ROC AUC")
+print("# compute ROC AUC")
 
-# from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score
 
-# ROC_AUC = roc_auc_score(y_test, y_pred1)
+ROC_AUC = roc_auc_score(y_test, y_pred1)
 
-# print('ROC AUC : {:.4f}'.format(ROC_AUC))
+print('ROC AUC : {:.4f}'.format(ROC_AUC))
 
-# print("# calculate cross-validated ROC AUC ")
+print("# calculate cross-validated ROC AUC ")
 
-# from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score
 
-# Cross_validated_ROC_AUC = cross_val_score(gnb, X_train, y_train, cv=5, scoring='roc_auc').mean()
+Cross_validated_ROC_AUC = cross_val_score(gnb, X_train, y_train, cv=5, scoring='roc_auc').mean()
 
-# print('Cross validated ROC AUC : {:.4f}'.format(Cross_validated_ROC_AUC))
+print('Cross validated ROC AUC : {:.4f}'.format(Cross_validated_ROC_AUC))
 
 
 print("================ k-Fold Cross Validation ====================")

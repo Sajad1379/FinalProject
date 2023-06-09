@@ -39,11 +39,11 @@ print(X_studentVle)
 
 for i in range(0,rows_studentVle):
     for j in range(0,rows_vle):
-        #print(X1[i][0] , X[j][0])
-        #print(type(X1[i][0]) , type(X[j][0]))
         if(X_studentVle[i][0] == X_vle[j][0]):
             studentVle.at[i , "activity_type"] = X_vle[j][1]
-            #print("okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
             break
 
 studentVle.to_excel(r'C:\Users\sajad\Desktop\FinalProject\studentVleTest.xlsx', index=False)
+
+
+
