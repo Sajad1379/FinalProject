@@ -9,11 +9,11 @@ import time
 
 # Add_comp = "C:\Users\hp\Desktop\FinalProject"
 
-data=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\data.xlsx',engine='openpyxl')
+data=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
-student=pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\studentInfo.xlsx',engine='openpyxl')
+student=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\studentInfo.xlsx',engine='openpyxl')
 
-testData = pd.read_excel(r'C:\Users\hp\Desktop\FinalProject\testData.xlsx',engine='openpyxl')
+testData = pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\testData.xlsx',engine='openpyxl')
 
 
 rows_data, cols_data = data.shape
@@ -34,7 +34,7 @@ for i in range(0,rows_student):
     weight_student.append([student.iloc[i,2],student.iloc[i,11]])
 
 
-X_student= np.array(weight_student)
+X_student= sorted(weight_student, key=lambda x: x[0])
 
 
 
@@ -49,21 +49,21 @@ for i in range(0,rows_data):
 
 X_data = np.array(weight_data)
 
-
+X_student= sorted(weight_data, key=lambda x: x[0])
 
 #============================================================
 count =0
-for i in range(0,rows_student):
-    flag = True
+for i in range(0,len(X_student)):
     for j in range(0,rows_data):
-        if(int(X_data[j][0]) == int(X_student[i][0])):
-
-            flag = False
+        if(i >= len(X_student)):
             break
-    if(flag):
-        print(X_student[i][0])
-        testData.at[count , 'student_id'] = X_student[i][0]
-        testData.at[count , 'final_result'] = X_student[i][1]
-        count = count + 1
+        if((X_data[j][0]) == (X_student[i][0])):
+            del X_student[i]
+            break
+    
+print(len(X_student))
+for i in range(0 , len(X_student)):
+    testData.at[count , 'student_id'] = X_student[i][0]
+    testData.at[count , 'final_result'] = X_student[i][1]
 
-testData.to_excel(r'C:\Users\hp\Desktop\FinalProject\testData.xlsx', index=False)
+testData.to_excel(r'C:\Users\sajad\Desktop\FinalProject\testData.xlsx', index=False)
