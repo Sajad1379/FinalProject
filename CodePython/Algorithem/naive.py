@@ -7,11 +7,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #impory dataset
+df=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
 # I consider that we have 100% of data
 
 
-df=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
 print("============ Exploratory data analysis ============")
 print("# view dimensions of dataset")
@@ -85,9 +85,9 @@ print(df[numerical].head())
 print("==================================================================")
 
 # declare feature vector and target
-
+df = df.drop(['id_student'], axis=1)
+df = df.drop(['LearningModel'],  axis=1)
 X=df.drop(['final_result'] , axis=1)
-
 y=df['final_result']
 
 #split data into separate training and test set
@@ -138,30 +138,24 @@ X_test = pd.DataFrame(X_test, columns=[cols])
 
 print(X_train.head())
 
-#We now have X_train dataset ready to be fed into the Gaussian Naive Bayes classifier. I will do it as follows.
 
 print("#model training")
 
-# train a Gaussian Naive Bayes classifier on the training set
 from sklearn.naive_bayes import GaussianNB
 
-# instantiate the model
 gnb = GaussianNB()
-
 
 print("# fit the model")
 print(gnb.fit(X_train, y_train))
 
 print("#predct the result")
-#=================
+
 
 y_pred = gnb.predict(X_test)
 
 print(y_pred)
 
 print("================ check accuracy score ================")
-#====================
-
 
 from sklearn.metrics import accuracy_score
 
@@ -177,8 +171,6 @@ print('Training-set accuracy score: {0:0.4f}'. format(accuracy_score(y_train, y_
 
 print("Check for overfitting and underfitting")
 
-# print the scores on training and test set
-
 print('Training set score: {:.4f}'.format(gnb.score(X_train, y_train)))
 
 print('Test set score: {:.4f}'.format(gnb.score(X_test, y_test)))
@@ -187,36 +179,20 @@ print("Compare model accuracy with null accuracy")
 
 print(y_test.describe())
 
-# check null accuracy score
-
 null_accuracy = (y_test.describe()[3]/y_test.describe()[0])
 
 print('Null accuracy score: {0:0.4f}'. format(null_accuracy))
 
 print("============ Confusion matrix ==============")
 
-print("# Print the Confusion Matrix and slice it into four pieces")
+print("# Print ُthe Confusion Matrix and slice it into four pieces")
 
 from sklearn.metrics import confusion_matrix
 
-
 labels = ['Withdrawn' , 'Fail' , 'Pass' , 'Distinction']
-
-# print(gnb.classes_)
 cm = confusion_matrix(y_test, y_pred, labels=gnb.classes_)
-
 print('Confusion matrix\n\n', cm)
-
-# print('\nTrue Positives(TP) = ', cm[0,0])
-
-# print('\nTrue Negatives(TN) = ', cm[1,1])
-
-# print('\nFalse Positives(FP) = ', cm[2,1])
-
-# print('\nFalse Negatives(FN) = ', cm[1,0])
-
 print("# visualize confusion matrix with seaborn heatmap")
-
 cm_matrix = pd.DataFrame(data=cm)
 
 sns.heatmap(cm_matrix, annot=True, fmt='d', xticklabels=gnb.classes_ , yticklabels=gnb.classes_)
@@ -225,19 +201,6 @@ plt.ylabel('prediction', fontsize=13)
 plt.xlabel('actual', fontsize=13)
 plt.title('confusion matrix', fontsize=17)
 plt.show()
-# رسم نمودار ماتریس اغتشاش
-# fig, ax = plt.subplots()
-# im = ax.matshow(cm)
-
-# # تنظیمات نمودار
-# ax.set_xticklabels([''] + labels)
-# ax.set_yticklabels([''] + labels)
-# plt.xlabel('Predicted Label')
-# plt.ylabel('True Label')
-# plt.title('Confusion Matrix')
-
-# # نمایش نمودار
-# plt.show()
 
 print("================= Classification metrices ===============")
 
@@ -428,7 +391,6 @@ print('Whitdrawn False Positive Rate : {0:0.4f}'.format(false_positive_rate_W))
 print("==================== Calculate class probabilities ==================")
 
 print("# print the first 10 predicted probabilities of classes 'Distinction' 'Fail' 'Pass' 'Withdrawn' ")
-
 
 y_pred_prob = gnb.predict_proba(X_test)[0:10]
 

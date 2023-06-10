@@ -148,13 +148,8 @@ print("#model training")
 #random forest
 from sklearn.ensemble import RandomForestClassifier
 
-
-# instantiate the model
-#naive bayes #rfc = GaussianNB()
 #random forest
 rfc = RandomForestClassifier(n_estimators=2000)
-
-
 print("# fit the model")
 print(rfc.fit(X_train, y_train))
 

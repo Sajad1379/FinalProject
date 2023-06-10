@@ -7,11 +7,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #impory dataset
+df=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
+df = df[(df < (df.mean() + 3 * df.std())) & (df > (df.mean() - 3 * df.std()))].dropna()
 # I consider that we have 100% of data
 
-
-df=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
 print("============ Exploratory data analysis ============")
 print("# view dimensions of dataset")
@@ -85,9 +85,9 @@ print(df[numerical].head())
 print("==================================================================")
 
 # declare feature vector and target
-
+df = df.drop(['id_student'], axis=1)
+df = df.drop(['LearningModel'],  axis=1)
 X=df.drop(['final_result'] , axis=1)
-
 y=df['final_result']
 
 #split data into separate training and test set
@@ -96,7 +96,7 @@ y=df['final_result']
 
 from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)   # I changed 0.3 to 0.2
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)   # I changed 0.3 to 0.2
 
 print("# check the shape of X_train")
 print(X_train.shape)
@@ -138,23 +138,29 @@ X_test = pd.DataFrame(X_test, columns=[cols])
 
 print(X_train.head())
 
-#We now have X_train dataset ready to be fed into the Gaussian Naive Bayes classifier. I will do it as follows.
+from sklearn.preprocessing import LabelEncoder
+
+# change data to coding
+le = LabelEncoder()
+y_train_encoded = le.fit_transform(y_train)
 
 print("#model training")
 #=================
-import xgboost as xgb
-xgb = XGBClassifier() 
+
+from xgboost import XGBClassifier
+xgb = XGBClassifier(max_depth = 6, learning_rate=0.1 , n_estimators=100)
 
 print("# fit the model")
-print(xgb.fit(X_train, y_train))
+xgb.fit(X_train, y_train_encoded)
 
 print("#predct the result")
 #=================
 
 y_pred = xgb.predict(X_test)
+y_pred_decoded = le.inverse_transform(y_pred)
+print(y_pred_decoded)
 
-print(y_pred)
-
+y_pred = y_pred_decoded
 
 print("================ check accuracy score ================")
 #====================
