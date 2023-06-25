@@ -1,23 +1,37 @@
+#impory libraries
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier
 import warnings
 warnings.filterwarnings('ignore')
 
 #impory dataset
+
 df=pd.read_excel(r'C:\Users\sajad\Desktop\FinalProject\data.xlsx',engine='openpyxl')
 
+# کد گذاری ستون نتیجه نهایی به خاطر انجام پیش پردازش درست
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['final_result'] = le.fit_transform(df['final_result'])
+
+
+# حذف ستون های غیر مرتبط 
+df = df.drop(['id_student'], axis=1)
+df = df.drop(['LearningModel'],  axis=1)
+
+print(df)
+
+# انجام پیش پردازش
+df = df[(df < (df.mean() + 3 * df.std())) & (df > (df.mean() - 3 * df.std()))].dropna()
 # I consider that we have 100% of data
-
-
 
 print("============ Exploratory data analysis ============")
 print("# view dimensions of dataset")
 
 print(df.shape)
 
+print(df.std())
 print("# preview the dataset")
 
 print(df.head())
@@ -85,10 +99,10 @@ print(df[numerical].head())
 print("==================================================================")
 
 # declare feature vector and target
-df = df.drop(['id_student'], axis=1)
-df = df.drop(['LearningModel'],  axis=1)
 X=df.drop(['final_result'] , axis=1)
 y=df['final_result']
+
+print(X , y)
 
 #split data into separate training and test set
 
@@ -96,7 +110,7 @@ y=df['final_result']
 
 from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)   # I changed 0.3 to 0.2
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)   # I changed 0.3 to 0.2
 
 print("# check the shape of X_train")
 print(X_train.shape)
@@ -108,7 +122,7 @@ print(X_test.shape)
 
 print("\n=================== Feature engineering ==================\n\n")
 
-print("# check data types in X_train")
+print(" check data types in X_train")
 
 print(X_train.dtypes)
 
@@ -131,25 +145,27 @@ from sklearn.preprocessing import RobustScaler
 scaler = RobustScaler()
 
 X_train = scaler.fit_transform(X_train)
-
 X_test = scaler.transform(X_test)
 X_train = pd.DataFrame(X_train, columns=[cols])
 X_test = pd.DataFrame(X_test, columns=[cols])
 
 print(X_train.head())
 
+#We now have X_train dataset ready to be fed into the Gaussian Naive Bayes classifier. I will do it as follows.
 
 print("#model training")
 
+# train a Gaussian Naive Bayes classifier on the training set
 from sklearn.naive_bayes import GaussianNB
 
+# instantiate the model
 gnb = GaussianNB()
 
 print("# fit the model")
 print(gnb.fit(X_train, y_train))
 
 print("#predct the result")
-
+#=================
 
 y_pred = gnb.predict(X_test)
 
@@ -171,6 +187,8 @@ print('Training-set accuracy score: {0:0.4f}'. format(accuracy_score(y_train, y_
 
 print("Check for overfitting and underfitting")
 
+# print the scores on training and test set
+
 print('Training set score: {:.4f}'.format(gnb.score(X_train, y_train)))
 
 print('Test set score: {:.4f}'.format(gnb.score(X_test, y_test)))
@@ -179,20 +197,24 @@ print("Compare model accuracy with null accuracy")
 
 print(y_test.describe())
 
+# check null accuracy score
+
 null_accuracy = (y_test.describe()[3]/y_test.describe()[0])
 
 print('Null accuracy score: {0:0.4f}'. format(null_accuracy))
 
 print("============ Confusion matrix ==============")
 
-print("# Print ُthe Confusion Matrix and slice it into four pieces")
+print("# Print the Confusion Matrix and slice it into four pieces")
 
 from sklearn.metrics import confusion_matrix
 
-labels = ['Withdrawn' , 'Fail' , 'Pass' , 'Distinction']
 cm = confusion_matrix(y_test, y_pred, labels=gnb.classes_)
+
 print('Confusion matrix\n\n', cm)
+
 print("# visualize confusion matrix with seaborn heatmap")
+
 cm_matrix = pd.DataFrame(data=cm)
 
 sns.heatmap(cm_matrix, annot=True, fmt='d', xticklabels=gnb.classes_ , yticklabels=gnb.classes_)
@@ -202,7 +224,8 @@ plt.xlabel('actual', fontsize=13)
 plt.title('confusion matrix', fontsize=17)
 plt.show()
 
-print("================= Classification metrices ===============")
+
+print("============== Recall === precision === f1 score ============")
 
 from sklearn.metrics import classification_report
 
@@ -237,93 +260,40 @@ TNW = cm[0][0] + cm[0][1] + cm[0][2] + cm[1][0] + cm[1][1] + cm[1][2] + cm[2][0]
 FPW = cm[3][0] + cm[3][1] + cm[3][2]
 FNW = cm[0][3] + cm[1][3] + cm[2][3]
 
-print("\n print'Distinction' classification accuracy\n")
-
-classification_accuracy_D = (TPD + TND) / float(TPD + TND + FPD + FND)
-
-print('Distinction Classification accuracy : {0:0.4f}'.format(classification_accuracy_D))
-
-print("# print Distinction classification error")
-
-classification_error_D = (FPD + FND) / float(TPD + TND + FPD + FND)
-
-print('Distinction Classification error : {0:0.4f}'.format(classification_error_D))
+#========Withdrawn======
 
 print("# print Distinction precision score")
 
 precisionD = TPD / float(TPD + FPD)
 
-
 print('Distinction Precision : {0:0.4f}'.format(precisionD))
-
-#================
 
 recallD = TPD / float(TPD + FND)
 
 print('Distinction Recall or Sensitivity : {0:0.4f}'.format(recallD))
 
-#================
-true_positive_rate_D= TPD / float(TPD + FND)
+fscoreD=2*(precisionD * recallD)/(precisionD + recallD)
 
-print('Distinction True Positive Rate : {0:0.4f}'.format(true_positive_rate_D))
-
-#==============
-false_positive_rate_D = FPD / float(FPD + TND)
-
-print('Distinction False Positive Rate : {0:0.4f}'.format(false_positive_rate_D))
+print('Distinction f1 score: {0:0.4f}'.format(fscoreD))
 
 #===============Fail=============
 
-
-print("\n print'Fail' classification accuracy\n")
-
-classification_accuracy_F = (TPF + TNF) / float(TPF + TNF + FPF + FNF)
-
-print('Fail Classification accuracy : {0:0.4f}'.format(classification_accuracy_F))
-
-print("# print Fail classification error")
-
-classification_error_F = (FPF + FNF) / float(TPF + TNF + FPF + FNF)
-
-print('Fail Classification error : {0:0.4f}'.format(classification_error_F))
 
 print("# print Fail precision score")
 
 precisionF = TPF / float(TPF + FPF)
 
-
 print('Fail Precision : {0:0.4f}'.format(precisionF))
-
-#================
 
 recallF = TPF / float(TPF + FNF)
 
 print('Fail Recall or Sensitivity : {0:0.4f}'.format(recallF))
 
-#================
-true_positive_rate_F= TPF / float(TPF + FNF)
+fscoreF=2*(precisionF * recallF)/(precisionF + recallF )
 
-print('Fail True Positive Rate : {0:0.4f}'.format(true_positive_rate_F))
-
-#==============
-false_positive_rate_F = FPF / float(FPF + TNF)
-
-print('Fail False Positive Rate : {0:0.4f}'.format(false_positive_rate_F))
+print('Fail f1 score: {0:0.4f}'.format(fscoreF))
 
 #===============Pass=============
-
-
-print("\n print'Pass' classification accuracy\n")
-
-classification_accuracy_P = (TPP + TNP) / float(TPP + TNP + FPP + FNP)
-
-print('Pass Classification accuracy : {0:0.4f}'.format(classification_accuracy_P))
-
-print("\n print Pass classification error\n")
-
-classification_error_P = (FPP + FNP) / float(TPP + TNP + FPP + FNP)
-
-print('Pass Classification error : {0:0.4f}'.format(classification_error_P))
 
 print("# print Pass precision score")
 
@@ -332,60 +302,29 @@ precisionP = TPP / float(TPP + FPP)
 
 print('Pass Precision : {0:0.4f}'.format(precisionP))
 
-#================
-
 recallP = TPP / float(TPP + FNP)
 
 print('Pass Recall or Sensitivity : {0:0.4f}'.format(recallP))
 
-#================
-true_positive_rate_P= TPP / float(TPP + FNP)
+fscoreP=2*(precisionP * recallP)/(precisionP + recallP )
 
-print('Pass True Positive Rate : {0:0.4f}'.format(true_positive_rate_P))
-
-#==============
-false_positive_rate_P = FPP / float(FPP + TNP)
-
-print('Pass False Positive Rate : {0:0.4f}'.format(false_positive_rate_P))
+print('Pass f1 score: {0:0.4f}'.format(fscoreP))
 
 #===============Whitdrawn=============
-
-
-print("\n print'Whitdrawn' classification accuracy\n")
-
-classification_accuracy_W = (TPW + TNW) / float(TPW + TNW + FPW + FNW)
-
-print('Whitdrawn Classification accuracy : {0:0.4f}'.format(classification_accuracy_W))
-
-print("# print Whitdrawn classification error")
-
-classification_error_W = (FPW + FNW) / float(TPW + TNW + FPW + FNW)
-
-print('Whitdrawn Classification error : {0:0.4f}'.format(classification_error_W))
 
 print("# print Whitdrawn precision score")
 
 precisionW = TPW / float(TPW + FPW)
 
-
 print('Whitdrawn Precision : {0:0.4f}'.format(precisionW))
-
-#================
 
 recallW = TPW / float(TPW + FNW)
 
 print('Whitdrawn Recall or Sensitivity : {0:0.4f}'.format(recallW))
 
-#================
-true_positive_rate_W= TPW / float(TPW + FNW)
+fscoreW=2*(precisionW * recallW)/(precisionW + recallW)
 
-print('Whitdrawn True Positive Rate : {0:0.4f}'.format(true_positive_rate_W))
-
-#==============
-false_positive_rate_W = FPW / float(FPW + TNW)
-
-print('Whitdrawn False Positive Rate : {0:0.4f}'.format(false_positive_rate_W))
-
+print('Whitdrawn f1 score: {0:0.4f}'.format(fscoreW))
 
 
 print("==================== Calculate class probabilities ==================")
@@ -397,7 +336,7 @@ y_pred_prob = gnb.predict_proba(X_test)[0:10]
 print(y_pred_prob)
 
 print("# store the probabilities in dataframe")
-#==============?===============
+
 y_pred_prob_df = pd.DataFrame(data=y_pred_prob, columns=gnb.classes_)
 
 print(y_pred_prob_df)
@@ -512,62 +451,41 @@ plt.xlabel('Predicted probabilities of Withdrawn ')
 plt.ylabel('Frequency')
 plt.show()
 
-print("==================== ROC - AUC ========================")
 
-print("# plot ROC Curve")
+classes = [0, 1, 2, 3]
 
-from sklearn.metrics import roc_curve
+# محاسبه‌ی مقادیر precision و recall برای هر کلاس
 
-fpr, tpr, thresholds = matrics.roc_curve(y_test, y_pred1, pos_label = 'Fail')
-
-plt.figure(figsize=(6,4))
-
-plt.plot(fpr, tpr, linewidth=2)
-
-plt.plot([0,1], [0,1], 'k--' )
-
-plt.rcParams['font.size'] = 12
-
-plt.title('ROC curve for Gaussian Naive Bayes Classifier for Predicting finalresult')
-
-#=========== ? ==============
-
-plt.xlabel('False Positive Rate (1 - Specificity)')
-
-plt.ylabel('True Positive Rate (Sensitivity)')
-
-plt.show()
-
-print("# compute ROC AUC")
-
-from sklearn.metrics import roc_auc_score
-
-ROC_AUC = roc_auc_score(y_test, y_pred1)
-
-print('ROC AUC : {:.4f}'.format(ROC_AUC))
-
-print("# calculate cross-validated ROC AUC ")
-
-from sklearn.model_selection import cross_val_score
-
-Cross_validated_ROC_AUC = cross_val_score(gnb, X_train, y_train, cv=5, scoring='roc_auc').mean()
-
-print('Cross validated ROC AUC : {:.4f}'.format(Cross_validated_ROC_AUC))
+from sklearn.metrics import precision_recall_curve, auc
 
 
-print("================ k-Fold Cross Validation ====================")
+# فرض کنید y_true برچسب‌های واقعی و y_scores امتیازهای پیش‌بینی شده باشند
+from sklearn.metrics import precision_score, recall_score
 
-print("# Applying 10-Fold Cross Validation")
+# فرض کنید y_true برچسب‌های واقعی و y_pred پیش‌بینی‌های یک مدل باشند
+# classes برای داده‌های چند کلاسی، لیستی از تمام کلاس‌های موجود در داده است
+classes = [0, 1, 2, 3]
 
-from sklearn.model_selection import cross_val_score
+# محاسبه‌ی مقادیر precision و recall برای هر کلاس
+precision = dict()
+recall = dict()
+for c in classes:
+    precision[c] = precision_score(y_test, y_pred , labels=[c], average='micro')
+    recall[c] = recall_score(y_test, y_pred , labels=[c], average='micro')
 
-scores = cross_val_score(gnb, X_train, y_train, cv = 10, scoring='accuracy')
 
-print('Cross-validation scores:{}'.format(scores))
+print(recall[1] , precision[1])
+for c in classes:
+    # محاسبه‌ی مساحت زیر نمودار
+    # area = auc(recall[1], precision[1])
+    area = auc(1.353, 2.4534)
 
-print("# compute Average cross-validation score")
-
-print('Average cross-validation score: {:.4f}'.format(scores.mean()))
+    # # رسم نمودار precision-recall
+    plt.plot(recall, precision, label=f"Precision-Recall curve (area = {area:.2f})")
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.legend(loc="lower left")
+    plt.show()
 
 
 
